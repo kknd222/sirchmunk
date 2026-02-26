@@ -1,0 +1,41 @@
+name: Publish Docker Image
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          python3 docker/build_image.py \
+            --push \
+            --registries "${DOCKER_USER}/sirchmunk"
+
+      - name: Push latest tag
+        if: success()
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          docker tag sirchmunk:latest ${DOCKER_USER}/sirchmunk:latest
+          docker push ${DOCKER_USER}/sirchmunk:latest
