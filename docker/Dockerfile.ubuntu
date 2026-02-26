@@ -50,6 +50,7 @@ WORKDIR /app
 
 # Install Python dependencies (core + web + mcp — no docs/tests in production)
 COPY requirements/ requirements/
+{pre_install_pip}
 RUN pip install --no-cache-dir {pip_index_args}\
     -r requirements/core.txt \
     -r requirements/web.txt \

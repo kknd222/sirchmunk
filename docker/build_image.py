@@ -257,6 +257,7 @@ class CPUImageBuilder(Builder):
             "rga_version": a.rga_version,
             "port": a.port,
             "image_tag": self.image_tag(),
+            "pre_install_pip": f"RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu"
         }
 
     def image_tag(self) -> str:
